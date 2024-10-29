@@ -33,168 +33,304 @@ body {
   margin: 5px 0;
 }
 
-/* General styles */
-.calendar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #fff;
-  padding: 10px;
-  max-width: 400px;
-  margin: auto;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+*, *:after, *:before {
+	box-sizing: border-box;
 }
 
-/* Toggle view buttons */
+:root {
+	--c-theme-primary: #008FFD;
+	--c-theme-primary-accent: #CBE8FF;
+	--c-bg-primary: #1F1F25; /* Fondo principal oscuro */
+	--c-bg-secondary: #333845; /* Fondo secundario oscuro */
+	--c-bg-tertiary: #2A2E39; /* Fondo terciario más claro */
+	--c-text-primary: #FFFFFF; /* Texto principal claro */
+	--c-text-secondary: #999FA6; /* Texto secundario gris */
+	--c-period-day: #ff3366;
+	--c-next-period-day: #ff9999;
+	--c-fertility-day: #66cc66;
+}
+
+body {
+	font-family: "Inter", sans-serif;
+	line-height: 1.5;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--c-bg-primary);
+	color: var(--c-text-primary);
+}
+
+button {
+	font: inherit;
+	cursor: pointer;
+	background-color: var(--c-bg-secondary);
+	color: var(--c-text-primary);
+	border: none;
+	padding: 0.5em 1em;
+	border-radius: 6px;
+	transition: background-color 0.3s ease;
+}
+
+button:focus {
+	outline: 0;
+	background-color: var(--c-theme-primary-accent);
+}
+
 .toggle-view {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+	display: flex;
+	gap: 10px;
+	margin-bottom: 10px;
 }
 
 .toggle-view button {
-  padding: 5px 15px;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  color: #333;
+	border-radius: 20px;
+	padding: 5px 15px;
+	cursor: pointer;
+	color: var(--c-text-primary);
 }
 
 .toggle-view .active {
-  background-color: #ff3366;
-  color: #fff;
+	background-color: var(--c-theme-primary);
+	color: #fff;
 }
 
-/* Navigation section */
 .navigation {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+	margin-top: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
 }
 
 .month-navigation, .year-navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 300px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	max-width: 300px;
 }
 
 .month-navigation h2, .year-navigation h2 {
-  font-size: 18px;
-  color: #fff;
+	font-size: 18px;
+	color: var(--c-text-primary);
 }
 
 /* Calendar grid for days */
 .calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  width: 100%;
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 5px;
+	width: 100%;
 }
 
 .calendar-day {
-  width: 100%;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: #333;
-  font-size: 14px;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10%;
+  padding: 4px;
+	color: var(--c-text-primary);
+	font-size: 14px;
 }
 
 .period-day {
-  background-color: #ff3366;
-  color: white;
+	background-color: var(--c-period-day);
+	color: white;
 }
 
 .next-period-day {
-  background-color: #ff9999;
-  color: white;
+	background-color: var(--c-next-period-day);
+	color: white;
 }
 
 .fertility-day {
-  background-color: #66cc66;
-  color: white;
+	background-color: var(--c-fertility-day);
+	color: white;
 }
 
 /* Year view styling */
 .calendar-year {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 30px;
 }
 
 .calendar-month {
-  margin-top: 10px;
-  padding: 5px;
-  text-align: center;
+	margin-top: 10px;
+	padding: 5px;
+	text-align: center;
 }
 
 .calendar-month h3 {
-  font-size: 16px;
-  color: #fff;
-  margin-bottom: 5px;
+	font-size: 16px;
+	color: var(--c-text-primary);
+	margin-bottom: 5px;
 }
 
 /* Legend styling */
 .legend {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  margin-top: 20px;
+	display: flex;
+	gap: 15px;
+	align-items: center;
+	margin-top: 20px;
 }
 
 .legend p {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+	color: var(--c-text-secondary);
 }
 
 .legend-box {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  margin-right: 5px;
-  border-radius: 3px;
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	margin-right: 5px;
+	border-radius: 3px;
 }
 
 .legend .period-day {
-  background-color: #ff3366;
+	background-color: var(--c-period-day);
 }
 
 .legend .next-period-day {
-  background-color: #ff9999;
+	background-color: var(--c-next-period-day);
 }
 
 .legend .fertility-day {
-  background-color: #66cc66;
+	background-color: var(--c-fertility-day);
 }
 
-/* Responsive adjustments for mobile */
+/* Datepicker styles */
+.datepicker {
+	width: 95%;
+	max-width: 350px;
+	background-color: var(--c-bg-tertiary);
+	border-radius: 10px;
+	box-shadow: 0 0 2px 0 rgba(0, 0, 0, .2), 0 5px 10px 0 rgba(0, 0, 0, .1);
+	padding: 1rem;
+}
+
+.datepicker-top {
+	margin-bottom: 1rem;
+}
+
+.btn-group {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1rem;
+	margin-top: -0.5rem;
+}
+
+.tag {
+	margin-right: 0.5rem;
+	margin-top: 0.5rem;
+	border: 0;
+	background-color: var(--c-bg-secondary);
+	border-radius: 10px;
+	padding: 0.5em 0.75em;
+	font-weight: 600;
+	color: var(--c-text-primary);
+}
+
+.month-selector {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.arrow {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	background-color: var(--c-bg-tertiary);
+	border-radius: 12px;
+	width: 2.5rem;
+	height: 2.5rem;
+	box-shadow: 0 0 2px 0 rgba(0, 0, 0, .25), 0 0 10px 0 rgba(0, 0, 0, .15);
+	color: var(--c-text-primary);
+}
+
+.month-name {
+	font-weight: 600;
+	color: var(--c-text-primary);
+}
+
+.datepicker-calendar {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	grid-row-gap: 1rem;
+}
+
+.day, .date {
+	justify-self: center;
+}
+
+.day {
+	color: var(--c-text-secondary);
+	font-size: 0.875em;
+	font-weight: 500;
+}
+
+.date {
+	border: 0;
+	padding: 0;
+	width: 2.25rem;
+	height: 2.25rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 6px;
+	font-weight: 600;
+	border: 2px solid transparent;
+	background-color: transparent;
+	cursor: pointer;
+	color: var(--c-text-primary);
+}
+
+.date:focus {
+	outline: 0;
+	color: var(--c-theme-primary);
+	border: 2px solid var(--c-theme-primary-accent);
+}
+
+.faded {
+	color: var(--c-text-secondary);
+}
+
+.current-day {
+	color: #fff;
+	border-color: var(--c-theme-primary);
+	background-color: var(--c-theme-primary);
+}
+
 @media (max-width: 480px) {
-  .calendar-day {
-    height: 35px;
-    font-size: 12px;
-  }
+	.calendar-day {
+		height: 35px;
+		font-size: 12px;
+	}
 
-  .month-navigation h2, .year-navigation h2 {
-    font-size: 16px;
-  }
+	.month-navigation h2, .year-navigation h2 {
+		font-size: 16px;
+	}
 
-  .calendar-year {
-    grid-template-columns: repeat(2, 1fr);
-  }
+	.calendar-year {
+		grid-template-columns: repeat(2, 1fr);
+	}
 
-  .legend p {
-    font-size: 12px;
-  }
+	.legend p {
+		font-size: 12px;
+	}
 
-  .toggle-view button {
-    padding: 5px 10px;
-    font-size: 12px;
-  }
+	.toggle-view button {
+		padding: 5px 10px;
+		font-size: 12px;
+	}
 }
 
