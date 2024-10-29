@@ -32,3 +32,169 @@ body {
   align-items: center;
   margin: 5px 0;
 }
+
+/* General styles */
+.calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  padding: 10px;
+  max-width: 400px;
+  margin: auto;
+}
+
+/* Toggle view buttons */
+.toggle-view {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.toggle-view button {
+  padding: 5px 15px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  color: #333;
+}
+
+.toggle-view .active {
+  background-color: #ff3366;
+  color: #fff;
+}
+
+/* Navigation section */
+.navigation {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.month-navigation, .year-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 300px;
+}
+
+.month-navigation h2, .year-navigation h2 {
+  font-size: 18px;
+  color: #fff;
+}
+
+/* Calendar grid for days */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  width: 100%;
+}
+
+.calendar-day {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #333;
+  font-size: 14px;
+}
+
+.period-day {
+  background-color: #ff3366;
+  color: white;
+}
+
+.next-period-day {
+  background-color: #ff9999;
+  color: white;
+}
+
+.fertility-day {
+  background-color: #66cc66;
+  color: white;
+}
+
+/* Year view styling */
+.calendar-year {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.calendar-month {
+  margin-top: 10px;
+  padding: 5px;
+  text-align: center;
+}
+
+.calendar-month h3 {
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+/* Legend styling */
+.legend {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.legend p {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  border-radius: 3px;
+}
+
+.legend .period-day {
+  background-color: #ff3366;
+}
+
+.legend .next-period-day {
+  background-color: #ff9999;
+}
+
+.legend .fertility-day {
+  background-color: #66cc66;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 480px) {
+  .calendar-day {
+    height: 35px;
+    font-size: 12px;
+  }
+
+  .month-navigation h2, .year-navigation h2 {
+    font-size: 16px;
+  }
+
+  .calendar-year {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .legend p {
+    font-size: 12px;
+  }
+
+  .toggle-view button {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
