@@ -1,41 +1,60 @@
 // src/components/EndPeriod.jsx
 import React, { useState } from 'react';
-import { db } from '../services/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { db, auth } from '../services/firebase';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { format, differenceInDays } from 'date-fns';
 import Modal from './Modal';
 import Snackbar from './Snackbar';
 
-const EndPeriod = ({ onPeriodEnd }) => {
+const EndPeriod = ({ onClose = () => {} }) => { // Add a default function
   const [showModal, setShowModal] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const handleEndPeriod = async () => {
-    const docRef = doc(db, 'periods', 'current');
-    await updateDoc(docRef, { isActive: false, endDate: new Date().toISOString() });
-    onPeriodEnd();
-    setShowSnackbar(true); // Mostrar Snackbar de confirmación
+  const confirmEndPeriod = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const periodDocRef = doc(db, `users/${user.uid}/periods`, 'current');
+        const endDate = new Date();
+        const formattedEndDate = format(endDate, 'yyyy-MM-dd');
+
+        const periodDoc = await getDoc(periodDocRef);
+        if (periodDoc.exists()) {
+          const startDate = new Date(periodDoc.data().startDate);
+          const duration = differenceInDays(endDate, startDate) + 1;
+
+          await updateDoc(periodDocRef, {
+            endDate: formattedEndDate,
+            duration: duration,
+            isActive: false
+          });
+
+          setSnackbarMessage('Periodo finalizado con éxito');
+          setShowModal(false);
+          onClose(); // Call onClose to close the component
+        }
+      }
+    } catch (error) {
+      console.error('Error finalizando el periodo:', error);
+      setSnackbarMessage('Error al finalizar el periodo');
+    }
   };
 
   return (
-    <>
-      <button onClick={() => setShowModal(true)} className="btn-primary">Ha terminado mi periodo</button>
+    <div className="end-period">
+      <h2>Confirmar la fecha de finalización del periodo</h2>
+      <button onClick={() => setShowModal(true)} className="confirm-button">Finalizar Periodo</button>
       {showModal && (
         <Modal
-          message="¿Estás seguro de que quieres finalizar el periodo?"
-          onConfirm={() => {
-            handleEndPeriod();
-            setShowModal(false);
-          }}
+          message="¿Confirmar el final del periodo?"
+          onConfirm={confirmEndPeriod}
           onCancel={() => setShowModal(false)}
         />
       )}
-      {showSnackbar && (
-        <Snackbar
-          message="Periodo finalizado con éxito"
-          onClose={() => setShowSnackbar(false)}
-        />
+      {snackbarMessage && (
+        <Snackbar message={snackbarMessage} onClose={() => setSnackbarMessage('')} />
       )}
-    </>
+    </div>
   );
 };
 

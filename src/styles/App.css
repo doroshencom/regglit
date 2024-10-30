@@ -311,3 +311,61 @@ button {
 	}
 }
 
+/* src/styles/App.css */
+.auth-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 20px;
+	background-color: #1f1f25;
+	border-radius: 8px;
+	width: 90%;
+	max-width: 400px;
+	margin: 0 auto;
+	color: #ffffff;
+  }
+  
+  .auth-container h2 {
+	margin-bottom: 20px;
+  }
+  
+  .auth-container form {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+  }
+  
+  .auth-container input {
+	margin-bottom: 15px;
+	padding: 10px;
+	font-size: 16px;
+	border-radius: 5px;
+	border: 1px solid #333845;
+	background-color: #2a2e39;
+	color: #ffffff;
+  }
+  
+  .auth-container .btn-primary {
+	width: 100%;
+  }
+  
+  .auth-container .error {
+	color: #ff3366;
+	margin-bottom: 10px;
+	font-size: 14px;
+  }
+  
+  .btn-google {
+	background-color: #4285F4;
+	color: white;
+  }
+  
+  /* src/styles/App.css */
+
+.user-greeting {
+	font-size: 1.2rem;
+	color: var(--c-text-primary);
+	text-align: left;
+	margin-bottom: 20px;
+  }
+  

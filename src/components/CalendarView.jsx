@@ -1,6 +1,6 @@
 // src/components/CalendarView.jsx
 import React, { useState, useEffect } from 'react';
-import { db } from '../services/firebase';
+import { db, auth } from '../services/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { format, addDays, differenceInDays, eachDayOfInterval, getDaysInMonth } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,39 +18,45 @@ const CalendarView = () => {
   useEffect(() => {
     const fetchCycleData = async () => {
       try {
-        const cyclesCollection = collection(db, 'cycles');
-        const cycleSnapshot = await getDocs(cyclesCollection);
-        const cycles = cycleSnapshot.docs
-          .map(doc => doc.data())
-          .filter(data => data.date && data.duration)
-          .sort((a, b) => new Date(a.date) - new Date(b.date));
+        const user = auth.currentUser;
+        if (user) {
+          const periodsCollection = collection(db, `users/${user.uid}/periods`);
+          const periodSnapshot = await getDocs(periodsCollection);
 
-        const periodRanges = cycles.map(cycle => {
-          const startDate = new Date(cycle.date);
-          const endDate = addDays(startDate, cycle.duration - 1);
-          const range = eachDayOfInterval({ start: startDate, end: endDate });
-          return { range, startDate, endDate };
-        });
-        setPeriodRanges(periodRanges);
+          const periods = periodSnapshot.docs
+            .map(doc => doc.data())
+            .filter(data => data.startDate && data.duration)
+            .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
-        if (cycles.length < 2) return;
+          // Construct period ranges to highlight on calendar
+          const periodRanges = periods.map(period => {
+            const startDate = new Date(period.startDate);
+            const endDate = addDays(startDate, period.duration - 1);
+            const range = eachDayOfInterval({ start: startDate, end: endDate });
+            return { range, startDate, endDate };
+          });
+          setPeriodRanges(periodRanges);
 
-        const intervals = cycles.slice(1).map((cycle, index) =>
-          differenceInDays(new Date(cycle.date), new Date(cycles[index].date))
-        );
-        const averageCycleLength = Math.round(intervals.reduce((sum, val) => sum + val, 0) / intervals.length);
+          if (periods.length < 2) return;
 
-        const lastPeriodDate = new Date(cycles[cycles.length - 1].date);
-        const nextPeriodStart = addDays(lastPeriodDate, averageCycleLength);
-        const nextPeriodRange = eachDayOfInterval({ start: nextPeriodStart, end: addDays(nextPeriodStart, 4) });
-        setNextPredictedDays(nextPeriodRange);
+          // Calculate average cycle length and predict next period
+          const intervals = periods.slice(1).map((period, index) =>
+            differenceInDays(new Date(period.startDate), new Date(periods[index].startDate))
+          );
+          const averageCycleLength = Math.round(intervals.reduce((sum, val) => sum + val, 0) / intervals.length);
 
-        const ovulationDay = addDays(nextPeriodStart, -14);
-        const fertilityRange = eachDayOfInterval({ start: addDays(ovulationDay, -3), end: addDays(ovulationDay, 3) });
-        setFertilityDays(fertilityRange);
+          const lastPeriodDate = new Date(periods[periods.length - 1].startDate);
+          const nextPeriodStart = addDays(lastPeriodDate, averageCycleLength);
+          const nextPeriodRange = eachDayOfInterval({ start: nextPeriodStart, end: addDays(nextPeriodStart, 4) });
+          setNextPredictedDays(nextPeriodRange);
 
+          // Calculate fertility days based on ovulation day (14 days before next period start)
+          const ovulationDay = addDays(nextPeriodStart, -14);
+          const fertilityRange = eachDayOfInterval({ start: addDays(ovulationDay, -3), end: addDays(ovulationDay, 3) });
+          setFertilityDays(fertilityRange);
+        }
       } catch (error) {
-        console.error("Error al obtener datos de ciclos: ", error);
+        console.error("Error fetching period data:", error);
       }
     };
 
@@ -67,6 +73,7 @@ const CalendarView = () => {
           const formattedDay = format(day, 'yyyy-MM-dd');
           let dayClass = '';
 
+          // Determine class for start, end, and range of period days
           periodRanges.forEach(({ range, startDate, endDate }) => {
             if (format(startDate, 'yyyy-MM-dd') === formattedDay) {
               dayClass = 'start-period-day';
@@ -77,6 +84,7 @@ const CalendarView = () => {
             }
           });
 
+          // Check if day is part of next predicted period or fertility window
           if (nextPredictedDays.some(d => format(d, 'yyyy-MM-dd') === formattedDay)) {
             dayClass = 'next-period-day';
           }
@@ -116,13 +124,13 @@ const CalendarView = () => {
 
   return (
     <div className="calendar">
-      <BackButton /> {/* Botón de volver atrás */}
-      
+      <BackButton />
+
       <div className="toggle-view">
         <button onClick={() => setViewMode("month")} className={viewMode === "month" ? "active" : ""}>Mes</button>
         <button onClick={() => setViewMode("year")} className={viewMode === "year" ? "active" : ""}>Año</button>
       </div>
-      
+
       <div className="navigation">
         {viewMode === "month" ? (
           <div className="month-navigation">

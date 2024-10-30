@@ -1,5 +1,6 @@
 // src/services/firebase.js
 import { initializeApp } from "firebase/app";
+import { getAuth } from 'firebase/auth';
 import { getFirestore } from "firebase/firestore";  // Importación correcta de Firestore
 
 // Configuración de Firebase
@@ -13,10 +14,10 @@ const firebaseConfig = {
   measurementId: "G-YZ621ZFQJG"
 };
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
 
 // Inicializar Firestore
-const db = getFirestore(app); // Asegura que se está inicializando con `getFirestore`
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-export { db };
+export { auth, db };
