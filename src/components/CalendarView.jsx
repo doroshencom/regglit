@@ -3,13 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../services/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { format, addDays, differenceInDays, eachDayOfInterval, getDaysInMonth } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import BackButton from './BackButton';
 
 const CalendarView = () => {
   const [viewMode, setViewMode] = useState("month");
-  const [periodRanges, setPeriodRanges] = useState([]);  // Almacena los días de periodo activo
-  const [nextPredictedDays, setNextPredictedDays] = useState([]);  // Almacena los días del próximo periodo estimado
-  const [fertilityDays, setFertilityDays] = useState([]);  // Almacena los días de fertilidad
+  const [periodRanges, setPeriodRanges] = useState([]);
+  const [nextPredictedDays, setNextPredictedDays] = useState([]);
+  const [fertilityDays, setFertilityDays] = useState([]);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
 
@@ -23,7 +25,6 @@ const CalendarView = () => {
           .filter(data => data.date && data.duration)
           .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        // Construir rangos de días de periodo con inicio y fin diferenciados
         const periodRanges = cycles.map(cycle => {
           const startDate = new Date(cycle.date);
           const endDate = addDays(startDate, cycle.duration - 1);
@@ -34,20 +35,17 @@ const CalendarView = () => {
 
         if (cycles.length < 2) return;
 
-        // Calcular el intervalo promedio del ciclo
         const intervals = cycles.slice(1).map((cycle, index) =>
           differenceInDays(new Date(cycle.date), new Date(cycles[index].date))
         );
         const averageCycleLength = Math.round(intervals.reduce((sum, val) => sum + val, 0) / intervals.length);
 
-        // Calcular el próximo periodo estimado
         const lastPeriodDate = new Date(cycles[cycles.length - 1].date);
         const nextPeriodStart = addDays(lastPeriodDate, averageCycleLength);
         const nextPeriodRange = eachDayOfInterval({ start: nextPeriodStart, end: addDays(nextPeriodStart, 4) });
         setNextPredictedDays(nextPeriodRange);
 
-        // Calcular los días de fertilidad (alrededor del día de ovulación)
-        const ovulationDay = addDays(nextPeriodStart, -14); // Aproximación del día de ovulación
+        const ovulationDay = addDays(nextPeriodStart, -14);
         const fertilityRange = eachDayOfInterval({ start: addDays(ovulationDay, -3), end: addDays(ovulationDay, 3) });
         setFertilityDays(fertilityRange);
 
@@ -69,7 +67,6 @@ const CalendarView = () => {
           const formattedDay = format(day, 'yyyy-MM-dd');
           let dayClass = '';
 
-          // Verificar si el día es el inicio, fin o un día intermedio del periodo
           periodRanges.forEach(({ range, startDate, endDate }) => {
             if (format(startDate, 'yyyy-MM-dd') === formattedDay) {
               dayClass = 'start-period-day';
@@ -80,7 +77,6 @@ const CalendarView = () => {
             }
           });
 
-          // Verificar si el día es un día estimado de próximo periodo o de fertilidad
           if (nextPredictedDays.some(d => format(d, 'yyyy-MM-dd') === formattedDay)) {
             dayClass = 'next-period-day';
           }
@@ -130,15 +126,23 @@ const CalendarView = () => {
       <div className="navigation">
         {viewMode === "month" ? (
           <div className="month-navigation">
-            <button onClick={handlePreviousMonth}>Anterior</button>
+            <button onClick={handlePreviousMonth}>
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </button>
             <h2>{format(new Date(currentYear, currentMonth), 'MMMM yyyy')}</h2>
-            <button onClick={handleNextMonth}>Siguiente</button>
+            <button onClick={handleNextMonth}>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
           </div>
         ) : (
           <div className="year-navigation">
-            <button onClick={handlePreviousYear}>Anterior</button>
+            <button onClick={handlePreviousYear}>
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </button>
             <h2>{currentYear}</h2>
-            <button onClick={handleNextYear}>Siguiente</button>
+            <button onClick={handleNextYear}>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
           </div>
         )}
       </div>

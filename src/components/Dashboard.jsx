@@ -71,12 +71,14 @@ const Dashboard = () => {
           ) : (
             <p>Calculando próxima fecha de menstruación...</p>
           )}
+
+<p style={{ color: isRegular ? 'green' : 'red' }}>
+            {isRegular ? 'Ciclo regular' : 'Ciclo irregular'}
+          </p>
           <button onClick={() => navigate('/symptoms')} className="btn-outline">Añadir Síntoma</button>
           <button onClick={() => navigate('/register')} className="btn-primary">Registrar Periodo</button>
           <button onClick={() => navigate('/calendar')} className="btn-secondary">Calendario</button>
-          <p style={{ color: isRegular ? 'green' : 'red' }}>
-            {isRegular ? 'Ciclo regular' : 'Ciclo irregular'}
-          </p>
+
         </>
       ) : (
         <>

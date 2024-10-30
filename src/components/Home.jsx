@@ -11,7 +11,6 @@ const Home = () => {
       <h1>Regglit</h1>
       <p>Tu periodo, en regla.</p>
       <button onClick={() => navigate('/dashboard')} className="btn-primary">Entrar</button>
-      <button onClick={() => navigate('/register')} className="btn-secondary">Registro</button>
     </div>
   );
 };
