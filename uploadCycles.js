@@ -42,12 +42,16 @@ data.forEach(async (record) => {
       return;
     }
 
+    // Verificar si el campo Duración está presente y es un número
+    const duration = record.Duración || 4; // Usa 4 días como valor por defecto si no está presente
+
     // Subir el documento a Firestore
     await addDoc(collection(db, 'cycles'), {
       date: formattedDate.toISOString().split('T')[0], // Convertir a formato ISO sin hora
-      event: record.Evento
+      event: record.Evento,
+      duration: duration // Agregar duración al registro
     });
-    console.log(`Uploaded: ${formattedDate.toISOString().split('T')[0]}`);
+    console.log(`Uploaded: ${formattedDate.toISOString().split('T')[0]}, Duración: ${duration} días`);
   } catch (error) {
     console.error("Error uploading document:", error);
   }

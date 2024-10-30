@@ -2,83 +2,89 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../services/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { format, differenceInDays, addDays } from 'date-fns';
+import EndPeriod from './EndPeriod'; // Componente para finalizar el periodo
+import BackButton from './BackButton';
 
 const Dashboard = () => {
   const [nextPeriodDate, setNextPeriodDate] = useState(null);
   const [daysUntilNextPeriod, setDaysUntilNextPeriod] = useState(null);
   const [isRegular, setIsRegular] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isPeriodActive, setIsPeriodActive] = useState(false);
+  const [startDate, setStartDate] = useState(null); // Fecha de inicio del periodo
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchPeriodStatus = async () => {
+      // Verificar si hay un periodo activo en la base de datos
+      const docRef = doc(db, 'periods', 'current');
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists() && docSnap.data().isActive) {
+        setIsPeriodActive(true);
+        setStartDate(new Date(docSnap.data().startDate)); // Guardar la fecha de inicio del periodo
+      } else {
+        setIsPeriodActive(false);
+        setStartDate(null);
+      }
+    };
+
     const calculateNextPeriod = async () => {
-      // Fetch historical period data from Firebase
       const cyclesCollection = collection(db, 'cycles');
       const cycleSnapshot = await getDocs(cyclesCollection);
       const cycles = cycleSnapshot.docs.map(doc => doc.data()).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      console.log("Fetched cycles:", cycles); // Debugging line to check data
+      if (cycles.length < 2) return;
 
-      if (cycles.length < 2) {
-        console.warn("Not enough data to calculate intervals.");
-        return;
-      }
-
-      // Calculate intervals between periods
-      const intervals = [];
-      for (let i = 1; i < cycles.length; i++) {
-        const prevDate = new Date(cycles[i - 1].date);
-        const currDate = new Date(cycles[i].date);
-        const interval = differenceInDays(currDate, prevDate);
-        intervals.push(interval);
-        console.log(`Interval between ${cycles[i - 1].date} and ${cycles[i].date}: ${interval} days`); // Debugging
-      }
-
-      // Average interval and regularity check
+      const intervals = cycles.slice(1).map((cycle, i) =>
+        differenceInDays(new Date(cycle.date), new Date(cycles[i].date))
+      );
       const averageInterval = intervals.reduce((acc, val) => acc + val, 0) / intervals.length;
       const deviation = Math.max(...intervals) - Math.min(...intervals);
-      setIsRegular(deviation <= 3); // Define regularity threshold
+      setIsRegular(deviation <= 3);
 
-      console.log("Average interval:", averageInterval); // Debugging
-      console.log("Cycle regularity (deviation <= 3):", deviation <= 3); // Debugging
-
-      // Calculate next predicted period date
       const lastPeriodDate = new Date(cycles[cycles.length - 1].date);
-      const predictedDate = addDays(lastPeriodDate, Math.round(averageInterval));
-      setNextPeriodDate(predictedDate);
-
-      // Calculate days until the next period
-      const daysRemaining = differenceInDays(predictedDate, new Date());
-      setDaysUntilNextPeriod(daysRemaining);
-
-      console.log("Predicted next period date:", predictedDate); // Debugging
-      console.log("Days until next period:", daysRemaining); // Debugging
+      setNextPeriodDate(addDays(lastPeriodDate, Math.round(averageInterval)));
+      setDaysUntilNextPeriod(differenceInDays(addDays(lastPeriodDate, Math.round(averageInterval)), new Date()));
     };
 
+    fetchPeriodStatus();
     calculateNextPeriod();
     setCurrentDate(new Date());
   }, []);
 
   return (
     <div className="dashboard">
+      <BackButton /> {/* Botón de regreso */}
       <img src="/path/to/logo.png" alt="Regglit logo" className="logo" />
       <h2>{format(currentDate, 'MMMM')}</h2>
       <h1>{format(currentDate, 'd')}</h1>
-      {nextPeriodDate && daysUntilNextPeriod !== null ? (
-        <p>
-          Debería de bajarte la regla durante los próximos <span style={{ color: 'red' }}>{daysUntilNextPeriod}</span> días
-        </p>
+
+      {!isPeriodActive ? (
+        <>
+          {nextPeriodDate && daysUntilNextPeriod !== null ? (
+            <p>
+              Debería de bajarte la regla durante los próximos <span style={{ color: 'red' }}>{daysUntilNextPeriod}</span> días
+            </p>
+          ) : (
+            <p>Calculando próxima fecha de menstruación...</p>
+          )}
+          <button onClick={() => navigate('/symptoms')} className="btn-outline">Añadir Síntoma</button>
+          <button onClick={() => navigate('/register')} className="btn-primary">Registrar Periodo</button>
+          <button onClick={() => navigate('/calendar')} className="btn-secondary">Calendario</button>
+          <p style={{ color: isRegular ? 'green' : 'red' }}>
+            {isRegular ? 'Ciclo regular' : 'Ciclo irregular'}
+          </p>
+        </>
       ) : (
-        <p>Calculando próxima fecha de menstruación...</p>
+        <>
+          <p>Estás en tu periodo</p>
+          <p>Iniciado el {startDate ? format(startDate, 'dd/MM/yyyy') : 'N/A'}</p>
+          <EndPeriod onPeriodEnd={() => setIsPeriodActive(false)} /> {/* Componente para finalizar el periodo */}
+        </>
       )}
-      <button onClick={() => navigate('/symptoms')} className="btn-outline">Añadir Síntoma</button>
-      <button onClick={() => navigate('/register')} className="btn-primary">Registrar Periodo</button>
-      <button onClick={() => navigate('/calendar')} className="btn-secondary">Calendario</button>
-      <p style={{ color: isRegular ? 'green' : 'red' }}>
-        {isRegular ? 'Ciclo regular' : 'Ciclo irregular'}
-      </p>
     </div>
   );
 };

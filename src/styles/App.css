@@ -1,84 +1,240 @@
 /* src/styles/App.css */
-body {
-  background-color: #1c1c1c;
-  color: #ffffff;
-  font-family: Arial, sans-serif;
-}
-
-.btn-primary {
-  background-color: #ff3366;
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-}
-
-.btn-outline {
-  color: #ff3366;
-  border: 1px solid #ff3366;
-  padding: 10px 20px;
-  border-radius: 5px;
-}
-
-.btn-secondary {
-  border: 1px solid #ffffff;
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 5px;
-}
-
-.symptom-label {
-  display: flex;
-  align-items: center;
-  margin: 5px 0;
-}
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
-*, *:after, *:before {
-	box-sizing: border-box;
-}
-
-:root {
-	--c-theme-primary: #008FFD;
-	--c-theme-primary-accent: #CBE8FF;
-	--c-bg-primary: #1F1F25; /* Fondo principal oscuro */
-	--c-bg-secondary: #333845; /* Fondo secundario oscuro */
-	--c-bg-tertiary: #2A2E39; /* Fondo terciario más claro */
-	--c-text-primary: #FFFFFF; /* Texto principal claro */
-	--c-text-secondary: #999FA6; /* Texto secundario gris */
-	--c-period-day: #ff3366;
-	--c-next-period-day: #ff9999;
-	--c-fertility-day: #66cc66;
-}
 
 body {
+	background-color: #1c1c1c;
+	color: #ffffff;
 	font-family: "Inter", sans-serif;
 	line-height: 1.5;
 	min-height: 100vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: var(--c-bg-primary);
-	color: var(--c-text-primary);
-}
-
-button {
-	font: inherit;
-	cursor: pointer;
-	background-color: var(--c-bg-secondary);
-	color: var(--c-text-primary);
+  }
+  
+  .btn-primary {
+	background-color: #ff3366;
+	color: #ffffff;
+	padding: 10px 20px;
+	border-radius: 5px;
 	border: none;
-	padding: 0.5em 1em;
-	border-radius: 6px;
+  }
+  
+  .btn-outline {
+	color: #ff3366;
+	border: 1px solid #ff3366;
+	padding: 10px 20px;
+	border-radius: 5px;
+  }
+  
+  .btn-secondary {
+	border: 1px solid #ffffff;
+	color: #ffffff;
+	padding: 10px 20px;
+	border-radius: 5px;
+  }
+  
+  .symptom-label {
+	display: flex;
+	align-items: center;
+	margin: 5px 0;
+  }
+  
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  
+  *, *:after, *:before {
+	  box-sizing: border-box;
+  }
+  
+  :root {
+	--c-theme-primary: #008FFD;
+	--c-theme-primary-accent: #CBE8FF;
+	--c-bg-primary: #1F1F25;
+	--c-bg-secondary: #333845;
+	--c-bg-tertiary: #2A2E39;
+	--c-text-primary: #FFFFFF;
+	--c-text-secondary: #999FA6;
+	--c-period-day: linear-gradient(135deg, #ff3366, #ff6699); /* Degradado para días de periodo */
+	--c-next-period-day: #ff9999; /* Color para el próximo periodo estimado */
+	--c-fertility-day: #66cc66; /* Color para días de fertilidad */
+}
+  
+  button {
+	  font: inherit;
+	  cursor: pointer;
+	  background-color: var(--c-bg-secondary);
+	  color: var(--c-text-primary);
+	  border: none;
+	  padding: 0.5em 1em;
+	  border-radius: 6px;
+	  transition: background-color 0.3s ease;
+  }
+  
+  button:focus {
+	  outline: 0;
+	  background-color: var(--c-theme-primary-accent);
+  }
+  
+  .toggle-view {
+	  display: flex;
+	  gap: 10px;
+	  margin-bottom: 10px;
+  }
+  
+  .toggle-view button {
+	  border-radius: 20px;
+	  padding: 5px 15px;
+	  color: var(--c-text-primary);
+  }
+  
+  .toggle-view .active {
+	  background-color: var(--c-theme-primary);
+	  color: #fff;
+  }
+  
+  .navigation {
+	  margin-top: 10px;
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  width: 100%;
+  }
+  
+  .month-navigation, .year-navigation {
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+	  width: 100%;
+	  max-width: 300px;
+  }
+  
+  .month-navigation h2, .year-navigation h2 {
+	  font-size: 18px;
+	  color: var(--c-text-primary);
+  }
+  
+  /* Calendar grid */
+  .calendar-grid {
+	  display: grid;
+	  grid-template-columns: repeat(7, 1fr);
+	  gap: 5px;
+	  width: 100%;
+	  margin-top: 10px;
+  }
+  
+ /* src/styles/App.css */
+/* src/styles/App.css */
+
+body {
+	background-color: #1c1c1c;
+	color: #ffffff;
+	font-family: "Inter", sans-serif;
+	line-height: 1.5;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Botones */
+.btn-primary {
+	background-color: #ff3366;
+	color: #ffffff;
+	padding: 10px 20px;
+	border-radius: 5px;
+	border: none;
+}
+
+.btn-outline {
+	color: #ff3366;
+	border: 1px solid #ff3366;
+	padding: 10px 20px;
+	border-radius: 5px;
+}
+
+.btn-secondary {
+	border: 1px solid #ffffff;
+	color: #ffffff;
+	padding: 10px 20px;
+	border-radius: 5px;
+}
+/* Estilos de días en el calendario */
+.calendar-day {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10%;
+	padding: 8px;
+	font-size: 14px;
+	color: var(--c-text-primary);
 	transition: background-color 0.3s ease;
+	background-color: var(--c-bg-tertiary); /* Fondo base para los días */
+}
+/* src/styles/App.css */
+
+/* Variables de color para el periodo */
+:root {
+	--c-start-period-day: #ff3366; /* Color para el inicio del periodo */
+	--c-period-day: linear-gradient(135deg, #ff5f8b, #ff80a6); /* Degradado para los días intermedios */
+	--c-end-period-day: #ff99cc; /* Color para el fin del periodo */
+	--c-next-period-day: #ff3e3e; /* Color para el próximo periodo estimado */
+	--c-fertility-day: #184661; /* Color para días de fertilidad */
 }
 
-button:focus {
-	outline: 0;
-	background-color: var(--c-theme-primary-accent);
+/* Estilos específicos de los días del periodo */
+.start-period-day {
+	background-color: var(--c-start-period-day); /* Color de inicio del periodo */
+	color: white;
+	border-radius: 10%; /* Resalta el inicio */
 }
 
+.period-day {
+	background: var(--c-period-day); /* Degradado para días intermedios */
+	color: white;
+	border-radius: 10%;
+}
+
+.end-period-day {
+	background-color: var(--c-end-period-day); /* Color para el fin del periodo */
+	color: white;
+	border-radius: 10%;
+}
+
+/* Estilos adicionales para otros días */
+.next-period-day {
+	background-color: var(--c-next-period-day); /* Fondo para próximos días estimados */
+	color: white;
+	border-radius: 10%;
+}
+
+.fertility-day {
+	background-color: var(--c-fertility-day); /* Fondo para días de fertilidad */
+	color: white;
+	border-radius: 10%;
+}
+
+/* Leyenda */
+.legend .start-period-day {
+	background-color: var(--c-start-period-day);
+}
+
+.legend .period-day {
+	background: var(--c-period-day);
+}
+
+.legend .end-period-day {
+	background-color: var(--c-end-period-day);
+}
+
+.legend .next-period-day {
+	background-color: var(--c-next-period-day);
+}
+
+.legend .fertility-day {
+	background-color: var(--c-fertility-day);
+}
+
+/* Vista de calendario y botones */
 .toggle-view {
 	display: flex;
 	gap: 10px;
@@ -88,7 +244,6 @@ button:focus {
 .toggle-view button {
 	border-radius: 20px;
 	padding: 5px 15px;
-	cursor: pointer;
 	color: var(--c-text-primary);
 }
 
@@ -105,85 +260,17 @@ button:focus {
 	width: 100%;
 }
 
-.month-navigation, .year-navigation {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	max-width: 300px;
-}
-
 .month-navigation h2, .year-navigation h2 {
 	font-size: 18px;
 	color: var(--c-text-primary);
 }
 
-/* Calendar grid for days */
-.calendar-grid {
-	display: grid;
-	grid-template-columns: repeat(7, 1fr);
-	gap: 5px;
-	width: 100%;
-}
-
-.calendar-day {
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 10%;
-  padding: 4px;
-	color: var(--c-text-primary);
-	font-size: 14px;
-}
-
-.period-day {
-	background-color: var(--c-period-day);
-	color: white;
-}
-
-.next-period-day {
-	background-color: var(--c-next-period-day);
-	color: white;
-}
-
-.fertility-day {
-	background-color: var(--c-fertility-day);
-	color: white;
-}
-
-/* Year view styling */
-.calendar-year {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 30px;
-}
-
-.calendar-month {
-	margin-top: 10px;
-	padding: 5px;
-	text-align: center;
-}
-
-.calendar-month h3 {
-	font-size: 16px;
-	color: var(--c-text-primary);
-	margin-bottom: 5px;
-}
-
-/* Legend styling */
+/* Leyenda */
 .legend {
 	display: flex;
 	gap: 15px;
 	align-items: center;
 	margin-top: 20px;
-}
-
-.legend p {
-	display: flex;
-	align-items: center;
-	font-size: 14px;
-	color: var(--c-text-secondary);
 }
 
 .legend-box {
@@ -195,7 +282,7 @@ button:focus {
 }
 
 .legend .period-day {
-	background-color: var(--c-period-day);
+	background-color: #ff3366;
 }
 
 .legend .next-period-day {
@@ -206,131 +293,227 @@ button:focus {
 	background-color: var(--c-fertility-day);
 }
 
-/* Datepicker styles */
-.datepicker {
-	width: 95%;
-	max-width: 350px;
-	background-color: var(--c-bg-tertiary);
-	border-radius: 10px;
-	box-shadow: 0 0 2px 0 rgba(0, 0, 0, .2), 0 5px 10px 0 rgba(0, 0, 0, .1);
-	padding: 1rem;
-}
-
-.datepicker-top {
-	margin-bottom: 1rem;
-}
-
-.btn-group {
-	display: flex;
-	flex-wrap: wrap;
-	margin-bottom: 1rem;
-	margin-top: -0.5rem;
-}
-
-.tag {
-	margin-right: 0.5rem;
-	margin-top: 0.5rem;
-	border: 0;
-	background-color: var(--c-bg-secondary);
-	border-radius: 10px;
-	padding: 0.5em 0.75em;
-	font-weight: 600;
-	color: var(--c-text-primary);
-}
-
-.month-selector {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.arrow {
+/* Botón de volver atrás */
+.back-button {
+	background-color: transparent;
+	border: none;
+	color: #ff3366;
+	font-size: 1rem;
+	cursor: pointer;
+	padding: 10px;
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	border: 0;
-	background-color: var(--c-bg-tertiary);
-	border-radius: 12px;
-	width: 2.5rem;
-	height: 2.5rem;
-	box-shadow: 0 0 2px 0 rgba(0, 0, 0, .25), 0 0 10px 0 rgba(0, 0, 0, .15);
-	color: var(--c-text-primary);
-}
-
-.month-name {
 	font-weight: 600;
-	color: var(--c-text-primary);
 }
 
-.datepicker-calendar {
+.back-button:hover {
+	color: #ff6699;
+}
+
+
+/* Botón de volver atrás */
+.back-button {
+	background-color: transparent;
+	border: none;
+	color: #ff3366;
+	font-size: 1rem;
+	cursor: pointer;
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	font-weight: 600;
+}
+
+.back-button:hover {
+	color: #ff6699;
+}
+
+  
+
+  
+  /* Estilo para la vista anual */
+  .calendar-year {
+	  display: grid;
+	  grid-template-columns: repeat(3, 1fr);
+	  gap: 30px;
+  }
+  
+  .calendar-month {
+	  margin-top: 10px;
+	  padding: 5px;
+	  text-align: center;
+  }
+  
+  .calendar-month h3 {
+	  font-size: 16px;
+	  color: var(--c-text-primary);
+	  margin-bottom: 5px;
+  }
+  
+  /* Leyenda */
+  .legend {
+	  display: flex;
+	  gap: 15px;
+	  align-items: center;
+	  margin-top: 20px;
+  }
+  
+  .legend p {
+	  display: flex;
+	  align-items: center;
+	  font-size: 14px;
+	  color: var(--c-text-secondary);
+  }
+  
+  .legend-box {
+	  display: inline-block;
+	  width: 15px;
+	  height: 15px;
+	  margin-right: 5px;
+	  border-radius: 3px;
+  }
+  
+  .legend .period-day {
+	  background-color: var(--c-period-day);
+  }
+  
+  .legend .next-period-day {
+	  background-color: var(--c-next-period-day);
+  }
+  
+
+  
+  /* Botón de volver atrás */
+  .back-button {
+	  background-color: transparent;
+	  border: none;
+	  color: #ff3366;
+	  font-size: 1rem;
+	  cursor: pointer;
+	  padding: 10px;
+	  display: flex;
+	  align-items: center;
+	  font-weight: 600;
+  }
+  
+  .back-button:hover {
+	  color: #ff6699;
+  }
+  
+  /* Adaptación móvil */
+  @media (max-width: 480px) {
+	  .calendar-day {
+		  height: 35px;
+		  font-size: 12px;
+	  }
+  
+	  .month-navigation h2, .year-navigation h2 {
+		  font-size: 16px;
+	  }
+  
+	  .calendar-year {
+		  grid-template-columns: repeat(2, 1fr);
+	  }
+  
+	  .legend p {
+		  font-size: 12px;
+	  }
+  
+	  .toggle-view button {
+		  padding: 5px 10px;
+		  font-size: 12px;
+	  }
+  }
+  
+  .register-period {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	color: var(--c-text-primary);
+  }
+  
+  .day-selector, .month-selector {
+	display: flex;
+	align-items: center;
+	margin: 15px 0;
+  }
+  
+  .day-display, .month-display {
+	font-size: 2rem;
+	margin: 0 10px;
+  }
+  
+  .calendar-grid {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
-	grid-row-gap: 1rem;
-}
+	gap: 10px;
+	margin-top: 20px;
+  }
+  
 
-.day, .date {
-	justify-self: center;
-}
-
-.day {
-	color: var(--c-text-secondary);
-	font-size: 0.875em;
-	font-weight: 500;
-}
-
-.date {
-	border: 0;
-	padding: 0;
-	width: 2.25rem;
-	height: 2.25rem;
+  
+  .calendar-day.selected {
+	background-color: var(--c-period-day);
+	color: #fff;
+  }
+  
+  .confirm-button {
+	background-color: #ff3366;
+	color: #fff;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	border: none;
+	margin-top: 20px;
+  }
+  
+/* Modal overlay and content */
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 6px;
-	font-weight: 600;
-	border: 2px solid transparent;
-	background-color: transparent;
-	cursor: pointer;
+	z-index: 1000;
+  }
+  
+  .modal-content {
+	background-color: var(--c-bg-secondary);
+	padding: 20px;
+	border-radius: 8px;
+	width: 80%;
+	max-width: 400px;
+	text-align: center;
 	color: var(--c-text-primary);
-}
-
-.date:focus {
-	outline: 0;
-	color: var(--c-theme-primary);
-	border: 2px solid var(--c-theme-primary-accent);
-}
-
-.faded {
-	color: var(--c-text-secondary);
-}
-
-.current-day {
+  }
+  
+  .modal-buttons {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 20px;
+  }
+  
+  /* Snackbar styles */
+  .snackbar {
+	position: fixed;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: #323232;
 	color: #fff;
-	border-color: var(--c-theme-primary);
-	background-color: var(--c-theme-primary);
-}
-
-@media (max-width: 480px) {
-	.calendar-day {
-		height: 35px;
-		font-size: 12px;
-	}
-
-	.month-navigation h2, .year-navigation h2 {
-		font-size: 16px;
-	}
-
-	.calendar-year {
-		grid-template-columns: repeat(2, 1fr);
-	}
-
-	.legend p {
-		font-size: 12px;
-	}
-
-	.toggle-view button {
-		padding: 5px 10px;
-		font-size: 12px;
-	}
-}
-
+	padding: 10px;
+	border-radius: 4px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	animation: fadeInOut 3s ease;
+	z-index: 1001;
+  }
+  
+  @keyframes fadeInOut {
+	0%, 100% { opacity: 0; }
+	10%, 90% { opacity: 1; }
+  }
+  

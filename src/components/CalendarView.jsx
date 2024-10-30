@@ -1,39 +1,59 @@
-// src/components/Calendar.jsx
+// src/components/CalendarView.jsx
 import React, { useState, useEffect } from 'react';
 import { db } from '../services/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { format, addDays, differenceInDays, eachDayOfInterval, getDaysInMonth } from 'date-fns';
+import BackButton from './BackButton';
 
-const Calendar = () => {
-  const [viewMode, setViewMode] = useState("month"); // 'month' o 'year'
-  const [periodDays, setPeriodDays] = useState([]); // Días de menstruación registrados
-  const [nextPredictedDays, setNextPredictedDays] = useState([]); // Próximos días estimados
-  const [fertilityDays, setFertilityDays] = useState([]); // Días de fertilidad estimados
+const CalendarView = () => {
+  const [viewMode, setViewMode] = useState("month");
+  const [periodRanges, setPeriodRanges] = useState([]);  // Almacena los días de periodo activo
+  const [nextPredictedDays, setNextPredictedDays] = useState([]);  // Almacena los días del próximo periodo estimado
+  const [fertilityDays, setFertilityDays] = useState([]);  // Almacena los días de fertilidad
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
 
   useEffect(() => {
     const fetchCycleData = async () => {
-      const cyclesCollection = collection(db, 'cycles');
-      const cycleSnapshot = await getDocs(cyclesCollection);
-      const cycles = cycleSnapshot.docs.map(doc => doc.data()).sort((a, b) => new Date(a.date) - new Date(b.date));
+      try {
+        const cyclesCollection = collection(db, 'cycles');
+        const cycleSnapshot = await getDocs(cyclesCollection);
+        const cycles = cycleSnapshot.docs
+          .map(doc => doc.data())
+          .filter(data => data.date && data.duration)
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      if (cycles.length < 2) return;
+        // Construir rangos de días de periodo con inicio y fin diferenciados
+        const periodRanges = cycles.map(cycle => {
+          const startDate = new Date(cycle.date);
+          const endDate = addDays(startDate, cycle.duration - 1);
+          const range = eachDayOfInterval({ start: startDate, end: endDate });
+          return { range, startDate, endDate };
+        });
+        setPeriodRanges(periodRanges);
 
-      const periodDates = cycles.map(cycle => new Date(cycle.date));
-      setPeriodDays(periodDates);
+        if (cycles.length < 2) return;
 
-      const intervals = periodDates.slice(1).map((date, index) => differenceInDays(date, periodDates[index]));
-      const averageCycleLength = Math.round(intervals.reduce((sum, val) => sum + val, 0) / intervals.length);
+        // Calcular el intervalo promedio del ciclo
+        const intervals = cycles.slice(1).map((cycle, index) =>
+          differenceInDays(new Date(cycle.date), new Date(cycles[index].date))
+        );
+        const averageCycleLength = Math.round(intervals.reduce((sum, val) => sum + val, 0) / intervals.length);
 
-      const lastPeriodDate = periodDates[periodDates.length - 1];
-      const nextPeriodStart = addDays(lastPeriodDate, averageCycleLength);
-      const nextPeriodRange = eachDayOfInterval({ start: nextPeriodStart, end: addDays(nextPeriodStart, 4) });
-      setNextPredictedDays(nextPeriodRange);
+        // Calcular el próximo periodo estimado
+        const lastPeriodDate = new Date(cycles[cycles.length - 1].date);
+        const nextPeriodStart = addDays(lastPeriodDate, averageCycleLength);
+        const nextPeriodRange = eachDayOfInterval({ start: nextPeriodStart, end: addDays(nextPeriodStart, 4) });
+        setNextPredictedDays(nextPeriodRange);
 
-      const ovulationDay = addDays(nextPeriodStart, -14);
-      const fertilityRange = eachDayOfInterval({ start: addDays(ovulationDay, -3), end: addDays(ovulationDay, 3) });
-      setFertilityDays(fertilityRange);
+        // Calcular los días de fertilidad (alrededor del día de ovulación)
+        const ovulationDay = addDays(nextPeriodStart, -14); // Aproximación del día de ovulación
+        const fertilityRange = eachDayOfInterval({ start: addDays(ovulationDay, -3), end: addDays(ovulationDay, 3) });
+        setFertilityDays(fertilityRange);
+
+      } catch (error) {
+        console.error("Error al obtener datos de ciclos: ", error);
+      }
     };
 
     fetchCycleData();
@@ -46,14 +66,27 @@ const Calendar = () => {
     return (
       <div className="calendar-grid">
         {days.map((day) => {
-          const isPeriod = periodDays.some(d => format(d, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd'));
-          const isNextPeriod = nextPredictedDays.some(d => format(d, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd'));
-          const isFertility = fertilityDays.some(d => format(d, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd'));
-
+          const formattedDay = format(day, 'yyyy-MM-dd');
           let dayClass = '';
-          if (isPeriod) dayClass = 'period-day';
-          else if (isNextPeriod) dayClass = 'next-period-day';
-          else if (isFertility) dayClass = 'fertility-day';
+
+          // Verificar si el día es el inicio, fin o un día intermedio del periodo
+          periodRanges.forEach(({ range, startDate, endDate }) => {
+            if (format(startDate, 'yyyy-MM-dd') === formattedDay) {
+              dayClass = 'start-period-day';
+            } else if (format(endDate, 'yyyy-MM-dd') === formattedDay) {
+              dayClass = 'end-period-day';
+            } else if (range.some(d => format(d, 'yyyy-MM-dd') === formattedDay)) {
+              dayClass = 'period-day';
+            }
+          });
+
+          // Verificar si el día es un día estimado de próximo periodo o de fertilidad
+          if (nextPredictedDays.some(d => format(d, 'yyyy-MM-dd') === formattedDay)) {
+            dayClass = 'next-period-day';
+          }
+          if (fertilityDays.some(d => format(d, 'yyyy-MM-dd') === formattedDay)) {
+            dayClass = 'fertility-day';
+          }
 
           return (
             <div key={day} className={`calendar-day ${dayClass}`}>
@@ -80,7 +113,6 @@ const Calendar = () => {
     );
   };
 
-  // Funciones para cambiar el año o mes
   const handleNextYear = () => setCurrentYear(prevYear => prevYear + 1);
   const handlePreviousYear = () => setCurrentYear(prevYear => prevYear - 1);
   const handleNextMonth = () => setCurrentMonth(prevMonth => (prevMonth + 1) % 12);
@@ -88,6 +120,8 @@ const Calendar = () => {
 
   return (
     <div className="calendar">
+      <BackButton /> {/* Botón de volver atrás */}
+      
       <div className="toggle-view">
         <button onClick={() => setViewMode("month")} className={viewMode === "month" ? "active" : ""}>Mes</button>
         <button onClick={() => setViewMode("year")} className={viewMode === "year" ? "active" : ""}>Año</button>
@@ -112,7 +146,9 @@ const Calendar = () => {
       {viewMode === "month" ? renderMonthView(currentMonth, currentYear) : renderYearView(currentYear)}
 
       <div className="legend">
+        <p><span className="legend-box start-period-day"></span> Inicio del periodo</p>
         <p><span className="legend-box period-day"></span> Días de menstruación</p>
+        <p><span className="legend-box end-period-day"></span> Fin del periodo</p>
         <p><span className="legend-box next-period-day"></span> Próximo periodo estimado</p>
         <p><span className="legend-box fertility-day"></span> Días de fertilidad</p>
       </div>
@@ -120,4 +156,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default CalendarView;
